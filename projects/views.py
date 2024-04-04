@@ -11,6 +11,16 @@ from . import forms
 class ProjectListView(ListView):
     model = models.Project
     template_name = 'project/list.html'
+    paginate_by = 6
+
+    def get_queryset(self):
+        
+        query_set = super().get_queryset()
+        where = {}
+        q = self.request.GET.get('q', None)
+        if q :
+            where['title__icontains'] = q
+        return query_set.filter(**where)
 
 
 class ProjectCreateView(CreateView):
@@ -27,7 +37,7 @@ class ProjectUpdateView(UpdateView):
     success_url = reverse_lazy('Project_list')
 
     def get_success_url(self):
-        return reverse('Project_update', args=[self.object.id])
+        return reverse('Project_update', args=[self.object.id]) # type: ignore
     
 
 
@@ -46,7 +56,7 @@ class TaskCreateView(CreateView):
     http_method_names = ['post']
 
     def get_success_url(self):
-        return reverse('Project_update', args=[self.object.project.id])
+        return reverse('Project_update', args=[self.object.project.id]) # type: ignore
 
 
 
@@ -58,7 +68,7 @@ class TaskUpdateView(UpdateView):
     http_method_names = ['post']
 
     def get_success_url(self):
-        return reverse('Project_update', args=[self.object.project.id])
+        return reverse('Project_update', args=[self.object.project.id]) # type: ignore
 
 
 
@@ -66,4 +76,4 @@ class TaskDeleteView(DeleteView):
     model = models.Task
 
     def get_success_url(self):
-        return reverse('Project_update', args=[self.object.project.id])
+        return reverse('Project_update', args=[self.object.project.id]) # type: ignore
